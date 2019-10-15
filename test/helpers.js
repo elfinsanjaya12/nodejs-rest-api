@@ -6,8 +6,11 @@ module.exports.createUser = async () => {
         email: 'test@mail.com',
         password: '123456',
     }
-    const user = new User(payload)
-    await user.save()
+    let user = await User.findOne({email:payload.email})
+    if (!user) {
+        user = new User(payload)
+        await user.save()
+    }
     const token = await user.generateAuthToken()
     return { user, token }
 };

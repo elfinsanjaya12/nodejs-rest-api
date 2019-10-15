@@ -4,7 +4,16 @@ const server = require('../src/app');
 const helpers = require('./helpers');
 
 describe('User API Tests', () => {
-    it('POST /users/ create new user', async () => {
+    it('GET /users create new user', async () => {
+        let user = await helpers.createUser()
+        const response = await request(server)
+            .get('/users')
+            .set('Authorization', `Bearer ${user.token}`);
+        expect(response.statusCode).to.equal(200)
+        expect(response.body.users).to.be.an.instanceof(Object);
+    })
+
+    it('POST /users create new user', async () => {
         const user = {
             name: 'Ahmad rosid',
             email: 'alahmadrosid@gmail.com',
@@ -53,8 +62,8 @@ describe('User API Tests', () => {
     it('GET /users/me Can access profile', async () => {
         let user = await helpers.createUser()
         const response = await request(server)
-                    .get('/users/me')
-                    .set('Authorization', `Bearer ${user.token}`);
+            .get('/users/me')
+            .set('Authorization', `Bearer ${user.token}`);
         expect(response.statusCode).to.equal(200);
         expect(response.body).to.include({
             name: user.user.name,
