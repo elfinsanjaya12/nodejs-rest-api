@@ -10,5 +10,4 @@ module.exports.createUser = async () => {
     await user.save()
     const token = await user.generateAuthToken()
     return { user, token }
-}
-;
+};

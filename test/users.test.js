@@ -45,12 +45,12 @@ describe('User API Tests', () => {
         expect(response.body.error).to.equal('Login failed! Check authentication credentials')
     })
 
-    it('POST /users/me Unauthorized access', async () => {
+    it('GET /users/me Unauthorized access', async () => {
         const response = await request(server).get('/users/me');
         expect(response.statusCode).to.equal(401)
     })
 
-    it('POST /users/me Can access profile', async () => {
+    it('GET /users/me Can access profile', async () => {
         let user = await helpers.createUser()
         const response = await request(server)
                     .get('/users/me')
