@@ -1,7 +1,7 @@
-var expect = require('chai').expect;
-var assert = require('chai').assert;
-var request = require('supertest');
-var server = require('../src/app');
+const expect = require('chai').expect;
+const request = require('supertest');
+const server = require('../src/app');
+const helpers = require('./helpers');
 
 describe('User API Tests', () => {
     it('POST /users/ create new user', async () => {
@@ -43,6 +43,23 @@ describe('User API Tests', () => {
         });
         expect(response.statusCode).to.equal(401)
         expect(response.body.error).to.equal('Login failed! Check authentication credentials')
+    })
+
+    it('POST /users/me Unauthorized access', async () => {
+        const response = await request(server).get('/users/me');
+        expect(response.statusCode).to.equal(401)
+    })
+
+    it('POST /users/me Can access profile', async () => {
+        let user = await helpers.createUser()
+        const response = await request(server)
+                    .get('/users/me')
+                    .set('Authorization', `Bearer ${user.token}`);
+        expect(response.statusCode).to.equal(200);
+        expect(response.body).to.include({
+            name: user.user.name,
+            email: user.user.email,
+        });
     })
 
 })
