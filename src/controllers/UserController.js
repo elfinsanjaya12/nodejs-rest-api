@@ -15,11 +15,9 @@ class UserController{
             const user = new User(req.body)
             await user.save()
             const token = await user.generateAuthToken()
-            res.statusCode = 201;
-            res.send({ user, token })
+            res.status(201).send({ user, token })
         } catch (error) {
-            res.statusCode = 422;
-            res.send(error)
+            res.status(422).send(error)
         }
     }
 
@@ -27,20 +25,16 @@ class UserController{
         try {
             const user = req.user
             await user.update(req.body)
-            res.statusCode = 201;
-            res.send({ user })
+            res.status(201).send({ user })
         } catch (error) {
-            res.statusCode = 400;
-            res.send(error)
+            res.status(422).send(error)
         }
     }
 
     async delete(req, res) {
         try {
             await User.deleteOne({ _id: req.params.id });
-
-            res.statusCode = 204;
-            res.send()
+            res.status(204).send()
         } catch (error) {
             res.status(400).send(error)
         }
@@ -50,13 +44,12 @@ class UserController{
         try {
             const { email, password } = req.body
             const user = await User.findByCredentials(email, password)
-            if (!user) {
-                return res.status(401).send({ error: 'Login failed! Check authentication credentials' })
-            }
             const token = await user.generateAuthToken()
             res.send({ user, token })
         } catch (error) {
-            res.status(400).send(error)
+            res.status(401).send({
+                error: 'Login failed! Check authentication credentials'
+            })
         }
     }
 

@@ -14,6 +14,10 @@ describe('User API Tests', () => {
         expect(response.statusCode).to.equal(201)
         expect(response.body).to.be.an.instanceof(Object);
         expect(response.body).to.include.keys(['token', 'user']);
+        expect(response.body.user).to.include({
+            name: 'Ahmad rosid',
+            email: 'alahmadrosid@gmail.com',
+        });
     })
 
     it('POST /users/ create new user validation', async () => {
@@ -21,12 +25,24 @@ describe('User API Tests', () => {
         expect(response.statusCode).to.equal(422)
     })
 
-    it('POST /users/login should success login', async () => {
+    it('POST /users/login success login', async () => {
         const response = await request(server).post('/users/login').send({
             email: 'alahmadrosid@gmail.com',
             password: '123456'
         });
-        expect(response.statusCode).to.equal(200)
+        expect(response.statusCode).to.equal(200);
+        expect(response.body.user).to.include({
+            email: 'alahmadrosid@gmail.com'
+        });
+    })
+
+    it('POST /users/login invalid login credentials', async () => {
+        const response = await request(server).post('/users/login').send({
+            email: 'alahmadrosid@gmail.com',
+            password: 'xxx'
+        });
+        expect(response.statusCode).to.equal(401)
+        expect(response.body.error).to.equal('Login failed! Check authentication credentials')
     })
 
 })
